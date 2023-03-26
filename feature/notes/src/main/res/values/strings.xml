@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="save">Save</string>
+    <string name="save_content_desc">Save note</string>
+
+    <string name="new_note">New note</string>
+    <string name="add_content_desc">Add a new note</string>
+    <string name="last_edited">Edited %s</string>
+</resources>

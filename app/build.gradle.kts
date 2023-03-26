@@ -51,9 +51,13 @@ android {
 }
 
 dependencies {
+    implementation(project(mapOf("path" to ":core:common")))
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
+
+    implementation(project(":feature:notes"))
+    implementation(project(":core:designsystem"))
 
     // Core
     implementation(libs.androidx.core.ktx)
@@ -63,8 +67,11 @@ dependencies {
     // Compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    implementation(libs.androidx.navigation.compose)
 
     // Accompanist SystemUIController
     implementation(libs.accompanist.systemuicontroller)
