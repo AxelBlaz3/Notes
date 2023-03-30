@@ -45,11 +45,11 @@ class HomeViewModel @Inject constructor(
                     .map(NotesUiState::Success)
                     .map { notesUiState ->
                         notesUiState.copy(notes = notesUiState.notes.sortedWith(
-                            compareBy { note ->
+                            compareBy<Note> { note ->
                                 when (notesOrder) {
                                     is NotesOrder.Name -> note.title
-                                    is NotesOrder.LastEdited -> note.lastEditedAt
-                                    else -> note.createdAt
+                                    is NotesOrder.LastEdited -> -1 * note.lastEditedAt.toEpochMilliseconds()
+                                    else -> -1 * note.createdAt.toEpochMilliseconds()
                                 }
                             }
                         ))

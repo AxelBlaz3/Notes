@@ -16,7 +16,7 @@ fun NotesAppBar(
         containerColor = MaterialTheme.colorScheme.secondaryContainer
     ),
 ) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = title,
         modifier = modifier,
         navigationIcon = navigationIcon,

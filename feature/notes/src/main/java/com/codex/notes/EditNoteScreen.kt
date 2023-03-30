@@ -1,11 +1,10 @@
 package com.codex.notes
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.*
@@ -31,6 +30,11 @@ import com.codex.designsystem.component.NotesAppBar
 import com.codex.designsystem.component.NotesBottomAppBar
 import com.codex.model.NoteContentType
 import com.codex.model.data.Note
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun EditNotesRoute(
@@ -83,10 +87,11 @@ fun EditNoteScreen(
 
     val currentNote: Note = editNotesUiState.note
 
-    Column(modifier = modifier) {
-        NotesAppBar(title = {
-//                            Text(text = stringResource(id = R.string.last_edited, currentNote.lastEditedAt))
-        }, navigationIcon = {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        NotesAppBar(title = {}, navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null)
             }
@@ -114,7 +119,11 @@ fun EditNoteScreen(
                     FocusRequester()
                 }
 
-                Column(modifier.weight(1f)) {
+                Column(
+                    modifier
+                        .verticalScroll(state = rememberScrollState())
+                        .weight(1f)
+                ) {
                     if (currentNote.checklist.isEmpty()) {
                         onAddListItem("", false)
                     }
@@ -153,10 +162,17 @@ fun EditNoteScreen(
                     onValueChange = { content ->
                         onNoteChange(editNotesUiState.copy(note = currentNote.copy(content = content)))
                     },
-                    modifier = modifier.weight(1f),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         unfocusedBorderColor = MaterialTheme.colorScheme.background,
                         focusedBorderColor = MaterialTheme.colorScheme.background
+                    ),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        capitalization = KeyboardCapitalization.Sentences,
+                        autoCorrect = true,
+                        keyboardType = KeyboardType.Text,
                     ),
                     placeholder = {
                         Text("Note")
@@ -164,8 +180,19 @@ fun EditNoteScreen(
             }
         }
 
+        Text(
+            text = stringResource(
+                id = R.string.last_edited, currentNote.lastEditedAt.toLocalDateTime(
+                    TimeZone.currentSystemDefault()
+                ).toJavaLocalDateTime().format(DateTimeFormatter.ofPattern("MMM d, h:m a"))
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = modifier.padding(8.dp)
+        )
+
         NotesBottomAppBar(
-            modifier = modifier,
+            modifier = modifier.imePadding(),
             actions = {
                 IconButton(onClick = {
                     onCheckboxClick(
@@ -179,7 +206,11 @@ fun EditNoteScreen(
                     )
                 }) {
                     Icon(
-                        Icons.Outlined.CheckBox,
+                        if (currentNote.type != NoteContentType.Checkboxes) {
+                            Icons.Outlined.CheckBox
+                        } else {
+                            Icons.Outlined.Title
+                        },
                         contentDescription = "Localized description"
                     )
                 }
@@ -292,7 +323,7 @@ fun CheckboxItem(
                 focusManager.clearFocus()
             }),
             keyboardOptions = KeyboardOptions.Default.copy(
-                capitalization = KeyboardCapitalization.Words,
+                capitalization = KeyboardCapitalization.Sentences,
                 autoCorrect = true,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.codex.common.decoder.StringDecoder
 import com.codex.data.repository.NotesRepository
 import com.codex.domain.DeleteNotesUseCase
+import com.codex.domain.SaveNotesUseCase
 import com.codex.model.NoteContentType
 import com.codex.model.data.Note
 import com.codex.notes.navigation.EditNoteArgs
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class EditNoteViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
     private val deleteNotesUseCase: DeleteNotesUseCase,
+    private val saveNotesUseCase: SaveNotesUseCase,
     stringDecoder: StringDecoder,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -101,7 +103,7 @@ class EditNoteViewModel @Inject constructor(
 
     fun saveCurrentNote() {
         viewModelScope.launch {
-            notesRepository.addNote(listOf(_currentNote.value.note))
+            saveNotesUseCase(listOf(_currentNote.value.note))
             _currentNote.value = EditNotesUiState()
         }
     }

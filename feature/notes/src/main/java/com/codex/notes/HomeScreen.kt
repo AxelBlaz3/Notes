@@ -370,7 +370,7 @@ fun SortAlertDialog(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(24.dp),
+                    .padding(top = 24.dp, start = 24.dp, end = 24.dp, bottom = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(
@@ -422,7 +422,7 @@ fun SortAlertDialog(
                     }
                 }
 
-                Divider()
+                Divider(modifier = modifier.padding(bottom = 8.dp))
 
                 TextButton(
                     onClick = {

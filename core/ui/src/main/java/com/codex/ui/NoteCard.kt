@@ -64,20 +64,24 @@ fun NoteCard(
             Text(
                 note.title,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = modifier.padding(bottom = 8.dp)
+                modifier = modifier.padding(bottom = 8.dp),
+                maxLines = 10,
+                overflow = TextOverflow.Ellipsis
             )
             if (note.type == NoteContentType.SimpleText) {
-                Text(note.content, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    note.content, style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 10,
+                    overflow = TextOverflow.Ellipsis
+                )
             } else if (note.type == NoteContentType.Checkboxes) {
                 note.checklist.map { Pair(it.key, it.value) }.take(3).forEach {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
+                            modifier = modifier.size(32.dp),
                             checked = it.second,
                             onCheckedChange = {},
                             enabled = false,
-                            modifier = modifier.padding(
-                                end = ButtonDefaults.IconSpacing
-                            )
                         )
                         Text(
                             text = it.first, maxLines = 1,
@@ -91,6 +95,19 @@ fun NoteCard(
                             )
                         )
                     }
+                }
+
+                if (note.checklist.size > 3) {
+                    Text(
+                        text = if (note.checklist.size - 3 == 1) {
+                            "+ ${note.checklist.size - 3} more item"
+                        } else {
+                            "+ ${note.checklist.size - 3} more items"
+                        },
+                        modifier = modifier.padding(start = 4.dp, top = 4.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
