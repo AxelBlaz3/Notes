@@ -39,29 +39,20 @@ class HomeViewModel @Inject constructor(
         get() = _notesOrderState
 
     val notesUiState: StateFlow<NotesUiState> =
-        _notesOrderState.flatMapLatest { notesOrder ->
-            _notesSearchState.flatMapLatest { notesSearchState ->
-                notesRepository.getNotes()
-                    .map(NotesUiState::Success)
-                    .map { notesUiState ->
-                        notesUiState.copy(notes = notesUiState.notes.sortedWith(
-                            compareBy<Note> { note ->
-                                when (notesOrder) {
-                                    is NotesOrder.Name -> note.title
-                                    is NotesOrder.LastEdited -> -1 * note.lastEditedAt.toEpochMilliseconds()
-                                    else -> -1 * note.createdAt.toEpochMilliseconds()
-                                }
-                            }
-                        ))
+        combine(_notesOrderState, _notesSearchState, notesRepository.getNotes(), ::Triple)
+            .map {
+                it.third.filter { note ->
+                    note.title.startsWith(it.second.text) ||
+                            note.content.contains(it.second.text)
+                }.sortedWith(compareBy { note ->
+                    when (it.first) {
+                        is NotesOrder.Name -> note.title
+                        is NotesOrder.LastEdited -> -1 * note.lastEditedAt.toEpochMilliseconds()
+                        else -> -1 * note.createdAt.toEpochMilliseconds()
                     }
-                    .map { notesUiState ->
-                        notesUiState.copy(notes = notesUiState.notes.filter { note ->
-                            note.title.startsWith(notesSearchState.text) ||
-                                    note.content.contains(notesSearchState.text)
-                        })
-                    }
+                })
             }
-        }
+            .map(NotesUiState::Success)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
