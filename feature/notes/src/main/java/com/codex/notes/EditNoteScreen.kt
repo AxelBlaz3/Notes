@@ -1,5 +1,18 @@
 package com.codex.notes
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -16,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -24,12 +38,17 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.app.ActivityCompat.startActivity
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codex.designsystem.component.NotesAppBar
 import com.codex.designsystem.component.NotesBottomAppBar
 import com.codex.model.NoteContentType
 import com.codex.model.data.Note
+import com.codex.notes.provider.NotesFileProvider
+import com.google.mlkit.vision.common.InputImage
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
@@ -62,7 +81,8 @@ internal fun EditNotesRoute(
         onAddListItem = viewModel::addCheckListItem,
         onDeleteChecklistItem = viewModel::deleteChecklistItem,
         onDeleteNote = viewModel::onDeleteNote,
-        isNewNote = viewModel.noteId.isEmpty()
+        isNewNote = viewModel.noteId.isEmpty(),
+        onImageCapture = viewModel::processImage
     )
 }
 
@@ -82,10 +102,21 @@ fun EditNoteScreen(
     onAddListItem: (String, Boolean) -> Unit,
     onDeleteChecklistItem: (String) -> Unit,
     onDeleteNote: (String) -> Unit,
+    onImageCapture: (InputImage) -> Unit,
     isNewNote: Boolean
 ) {
 
     val currentNote: Note = editNotesUiState.note
+    val context = LocalContext.current
+
+    var uri: Uri? = remember { null }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) {
+        println("Uri: $it")
+        onImageCapture(InputImage.fromFilePath(context, uri!!))
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -156,6 +187,7 @@ fun EditNoteScreen(
                     }
                 }
             }
+
             else -> {
                 OutlinedTextField(
                     value = currentNote.content,
@@ -214,35 +246,43 @@ fun EditNoteScreen(
                         contentDescription = "Localized description"
                     )
                 }
+//                IconButton(onClick = {
+//                    onPinClick(editNotesUiState.copy(note = editNotesUiState.note.copy(isPinned = !editNotesUiState.note.isPinned)))
+//                }) {
+//                    Icon(
+//                        if (currentNote.isPinned) {
+//                            Icons.Rounded.PushPin
+//                        } else {
+//                            Icons.Outlined.PushPin
+//                        },
+//                        contentDescription = "Localized description"
+//                    )
+//                }
+//                IconButton(onClick = {
+//                    onArchiveClick(
+//                        editNotesUiState.copy(
+//                            note = editNotesUiState.note.copy(
+//                                isArchived = !editNotesUiState.note.isArchived
+//                            )
+//                        )
+//                    )
+//                }) {
+//                    Icon(
+//                        if (currentNote.isArchived) {
+//                            Icons.Rounded.Archive
+//                        } else {
+//                            Icons.Outlined.Archive
+//                        },
+//                        contentDescription = "Localized description",
+//                    )
+//                }
+
                 IconButton(onClick = {
-                    onPinClick(editNotesUiState.copy(note = editNotesUiState.note.copy(isPinned = !editNotesUiState.note.isPinned)))
+                    val currentUri = NotesFileProvider.getImageUri(context)
+                    uri = currentUri
+                    cameraLauncher.launch(uri)
                 }) {
-                    Icon(
-                        if (currentNote.isPinned) {
-                            Icons.Rounded.PushPin
-                        } else {
-                            Icons.Outlined.PushPin
-                        },
-                        contentDescription = "Localized description"
-                    )
-                }
-                IconButton(onClick = {
-                    onArchiveClick(
-                        editNotesUiState.copy(
-                            note = editNotesUiState.note.copy(
-                                isArchived = !editNotesUiState.note.isArchived
-                            )
-                        )
-                    )
-                }) {
-                    Icon(
-                        if (currentNote.isArchived) {
-                            Icons.Rounded.Archive
-                        } else {
-                            Icons.Outlined.Archive
-                        },
-                        contentDescription = "Localized description",
-                    )
+                    Icon(Icons.Outlined.PhotoCamera, null)
                 }
 
                 if (!isNewNote) {

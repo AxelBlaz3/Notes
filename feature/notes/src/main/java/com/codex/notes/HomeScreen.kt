@@ -138,20 +138,20 @@ fun HomeScreen(
                             }
                         }
                     }, actions = {
-                        IconButton(onClick = {
-                            onPinNotes(selectedNoteIds)
-                            onCancelNotesSelection()
-                            onNotesActionComplete(selectedNoteIds.size, NotesActionComplete.Pin)
-                        }) {
-                            Icon(Icons.Outlined.PushPin, null)
-                        }
-                        IconButton(onClick = {
-                            onArchiveNotes(selectedNoteIds)
-                            onCancelNotesSelection()
-                            onNotesActionComplete(selectedNoteIds.size, NotesActionComplete.Archive)
-                        }) {
-                            Icon(Icons.Outlined.Archive, null)
-                        }
+//                        IconButton(onClick = {
+//                            onPinNotes(selectedNoteIds)
+//                            onCancelNotesSelection()
+//                            onNotesActionComplete(selectedNoteIds.size, NotesActionComplete.Pin)
+//                        }) {
+//                            Icon(Icons.Outlined.PushPin, null)
+//                        }
+//                        IconButton(onClick = {
+//                            onArchiveNotes(selectedNoteIds)
+//                            onCancelNotesSelection()
+//                            onNotesActionComplete(selectedNoteIds.size, NotesActionComplete.Archive)
+//                        }) {
+//                            Icon(Icons.Outlined.Archive, null)
+//                        }
                         IconButton(onClick = {
                             onDeleteNotes(selectedNoteIds)
                             onCancelNotesSelection()

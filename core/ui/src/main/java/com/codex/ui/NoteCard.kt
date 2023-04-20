@@ -61,13 +61,15 @@ fun NoteCard(
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            Text(
-                note.title,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = modifier.padding(bottom = 8.dp),
-                maxLines = 10,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (note.title.isNotEmpty()) {
+                Text(
+                    note.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = modifier.padding(bottom = 8.dp),
+                    maxLines = 10,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             if (note.type == NoteContentType.SimpleText) {
                 Text(
                     note.content, style = MaterialTheme.typography.bodyMedium,

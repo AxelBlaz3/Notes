@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.28.0"
-androidGradlePlugin = "7.4.0"
+androidGradlePlugin = "8.0.0"
 androidxActivity = "1.6.1"
 androidxComposeBom = "2023.01.00"
 androidxComposeMaterial3 = "1.1.0-alpha04"
@@ -20,6 +20,7 @@ okhttp = "4.10.0"
 retrofit = "2.9.0"
 retrofitKotlinxSerializationJson = "0.8.0"
 room = "2.5.0-rc01"
+textRecognition = "18.0.2"
 
 [libraries]
 accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
@@ -53,6 +54,7 @@ retrofit-kotlin-serialization = { group = "com.jakewharton.retrofit", name = "re
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "textRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

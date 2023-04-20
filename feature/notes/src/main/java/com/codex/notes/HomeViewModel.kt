@@ -1,5 +1,6 @@
 package com.codex.notes
 
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codex.data.repository.NotesRepository
@@ -9,6 +10,7 @@ import com.codex.model.data.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,8 +44,8 @@ class HomeViewModel @Inject constructor(
         combine(_notesOrderState, _notesSearchState, notesRepository.getNotes(), ::Triple)
             .map {
                 it.third.filter { note ->
-                    note.title.startsWith(it.second.text) ||
-                            note.content.contains(it.second.text)
+                    note.title.lowercase().startsWith(it.second.text.lowercase()) ||
+                            note.content.lowercase().contains(it.second.text.lowercase())
                 }.sortedWith(compareBy { note ->
                     when (it.first) {
                         is NotesOrder.Name -> note.title

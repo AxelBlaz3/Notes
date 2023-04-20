@@ -51,6 +51,15 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
+//    val cameraxVersion = "1.1.0-beta01"
+//    implementation("androidx.camera:camera-core:${cameraxVersion}")
+//    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+//    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+//    implementation("androidx.camera:camera-video:${cameraxVersion}")
+//
+//    implementation("androidx.camera:camera-view:${cameraxVersion}")
+//    implementation("androidx.camera:camera-extensions:${cameraxVersion}")
+
     implementation(project(":core:common"))
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
@@ -80,6 +89,9 @@ dependencies {
     api(libs.androidx.compose.material.iconsExtended)
 
     implementation(libs.kotlinx.datetime)
+
+    // Text recognition
+    implementation(libs.text.recognition)
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

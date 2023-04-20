@@ -1,5 +1,6 @@
 package com.codex.notes
 
+import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,10 @@ import com.codex.domain.SaveNotesUseCase
 import com.codex.model.NoteContentType
 import com.codex.model.data.Note
 import com.codex.notes.navigation.EditNoteArgs
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -112,6 +117,20 @@ class EditNoteViewModel @Inject constructor(
         viewModelScope.launch {
             deleteNotesUseCase(setOf(noteId))
         }
+    }
+
+    fun processImage(inputImage: InputImage) {
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        recognizer.process(inputImage)
+            .addOnSuccessListener { text ->
+                val note = _currentNote.value.note.copy(content = text.text)
+                _currentNote.value = _currentNote.value.copy(note = note)
+                recognizer.close()
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+            }
     }
 }
 

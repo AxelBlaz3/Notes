@@ -1,3 +1,6 @@
+import com.google.android.libraries.mapsplatform.secrets_gradle_plugin.androidProject
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 buildscript {
     repositories {
         google()
@@ -10,6 +13,13 @@ buildscript {
         classpath(kotlin("serialization", version = kotlinVersion))
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
+subprojects {
+    afterEvaluate{
+        tasks.withType<KotlinCompile> {
+            kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+        }
+    }
+}
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false

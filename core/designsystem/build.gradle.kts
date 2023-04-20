@@ -37,7 +37,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildToolsVersion = "34.0.0 rc2"
 }
 
 dependencies {
